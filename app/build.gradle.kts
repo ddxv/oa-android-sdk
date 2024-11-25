@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "dev.openattribution.sdk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dev.openattribution.sdk"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -37,10 +37,19 @@ android {
 
 dependencies {
 
+    implementation(platform(libs.okhttp.bom))
+
+    implementation(libs.okhttp)
+
+    implementation(libs.play.services.ads.identifier)
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
 }

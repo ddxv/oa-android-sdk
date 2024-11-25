@@ -16,9 +16,6 @@ import java.util.concurrent.TimeUnit
 
 
 
-val myBaseUrl: String = "https://oa.thirdgate.dev"
-//val myBaseUrl: String = "http://localhost:8000"
-
 
 
 class UserIdManager(context: Context) {
@@ -81,13 +78,46 @@ object EmulatorDetector {
     }
 }
 
-class OpenAttribution(private val context: Context) {
 
-//    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+class OpenAttribution private constructor(private val context: Context) {
+
+        companion object {
+            private var myBaseUrl: String? = null
+
+            // Method to initialize the SDK
+            fun initialize(context: Context, baseUrl: String): OpenAttribution {
+
+                val instance = OpenAttribution(context)
+                instance.trackAppOpenAsync()
+
+                myBaseUrl = baseUrl
+                return OpenAttribution(context)
+            }
+
+            // Getter for the base URL to ensure it's set
+            fun getBaseUrl(): String {
+                return myBaseUrl ?: throw IllegalStateException("Base URL is not yet initialized. Call OpenAttribution.initialize() first.")
+            }
+        }
+
+
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val userIdManager by lazy { UserIdManager.getInstance(context) }
 
 
+    private fun trackAppOpenAsync() {
+        appScope.launch {
+            try {
+                trackAppOpen()
+            } catch (e: Exception) {
+                Log.e("OpenAttribution", "Error in trackAppOpen: ${e.message}")
+            }
+        }
+    }
+
+
      suspend fun trackAppOpen() {
+         val baseUrl = getBaseUrl() // Ensure the URL is retrieved dynamically
         val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         val myTimestamp = System.currentTimeMillis()
         val eventId = "app_open"
@@ -116,6 +146,7 @@ class OpenAttribution(private val context: Context) {
         }
 
         val url = constructTrackingUrl(
+            baseUrl,
             appendedPackageName,
             myOaUid,
             gaid,
@@ -148,6 +179,7 @@ class OpenAttribution(private val context: Context) {
     }
 
     private fun constructTrackingUrl(
+        baseUrl: String,
         packageName: String,
         oauid: String,
         gaid: String?,
@@ -156,7 +188,7 @@ class OpenAttribution(private val context: Context) {
         eventUid: String,
         eventTime: Long
     ): String {
-        val url= "$myBaseUrl/collect/events/$packageName?oa_uid=$oauid&ifa=$gaid&android_id=$androidId&event_id=$eventId&event_uid=$eventUid&event_time=$eventTime"
+        val url= "$baseUrl/collect/events/$packageName?oa_uid=$oauid&ifa=$gaid&android_id=$androidId&event_id=$eventId&event_uid=$eventUid&event_time=$eventTime"
 
         Log.i("OpenAttribution", "Constructing tracking URL $url")
         return url

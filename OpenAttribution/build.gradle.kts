@@ -1,11 +1,12 @@
 plugins {
-    alias(libs.plugins.android.library)
+//    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("com.android.library")
 }
 
 android {
     namespace = "dev.openattribution.sdk"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
@@ -33,6 +34,13 @@ android {
 }
 
 dependencies {
+
+    implementation(platform(libs.okhttp.bom))
+
+    implementation(libs.okhttp)
+
+    implementation(libs.play.services.ads.identifier)
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
