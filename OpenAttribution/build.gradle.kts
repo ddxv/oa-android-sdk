@@ -1,8 +1,7 @@
 plugins {
-//    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("com.android.library")
-    `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 android {
@@ -34,17 +33,6 @@ android {
         jvmTarget = "11"
     }
 
-    publishing {
-            multipleVariants("MINAMEEE") {
-                allVariants()
-                withJavadocJar()
-            }
-
-
-        }
-
-    group = "dev.openattribution"
-    version = "0.1"
 
 }
 
@@ -65,83 +53,32 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-publishing {
+mavenPublishing {
+    coordinates("dev.openattribution.sdk", "open-attribution-sdk", "0.0.1-SNAPSHOT")
 
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "dev.openattribution"
-            artifactId = "my-library"
-            from(components["java"])
-
-            version = "0.22"
-
-
-
-            pom {
-                name.set("POM_NAME")
-                url.set("POM_URL")
-                description.set("POM_DESCRIPTION")
-                developers {
-                    developer {
-                        id.set("POM_DEVELOPER_ID")
-                        name.set("POM_DEVELOPER_NAME")
-                    }
-                }
-                licenses {
-                    license {
-                        name.set("POM_LICENCE_NAME")
-                        url.set("POM_LICENCE_URL")
-                        distribution.set("POM_LICENCE_DIST")
-                    }
-                }
-
-                scm {
-                    url.set("POM_SCM_URL")
-                    connection.set("POM_SCM_CONNECTION")
-                    developerConnection.set("POM_SCM_DEV_CONNECTION")
-                }
-
-                // MAYBE NEEDS TO BE IN AFTEREVAL
-//                withXml {
-//                    fun groovy.util.Node.getChild(name: String): groovy.util.Node {
-//                        return (get(name) as groovy.util.NodeList).first() as groovy.util.Node
-//                    }
-//
-//                    fun groovy.util.Node.getChildOrNull(name: String): groovy.util.Node? {
-//                        return (get(name) as groovy.util.NodeList).firstOrNull() as? groovy.util.Node
-//                    }
-//
-//                    val node = asNode()
-//                    val dependencies = node.getChild("dependencies")
-//                    dependencies.children().filterIsInstance<groovy.util.Node>()
-//                        .forEach { dependency ->
-//                            val artifactId = dependency.getChild("artifactId")
-//                            if (artifactId.text() == "okhttp" || artifactId.text() == "firebase-appindexing") {
-//                                // Ensure optional flag is set
-//                                val optional = dependency.getChildOrNull("optional")
-//                                if (optional != null) {
-//                                    optional.setValue("true")
-//                                } else {
-//                                    dependency.appendNode("optional", "true")
-//                                }
-//
-//                                // Ensure scope is set to 'compile'
-//                                val scope = dependency.getChildOrNull("scope")
-//                                if (scope != null) {
-//                                    scope.setValue("compile")
-//                                } else {
-//                                    dependency.appendNode("scope", "compile")
-//                                }
-//                            }
-//                        }
-//                }
+    pom {
+        name.set("Open Attribution Android SDK")
+        description.set("This is the Android SDK for Open Attribution.")
+        inceptionYear.set("2024")
+        url.set("https://github.com/OpenAttribution/open-attribution/")
+        licenses {
+            license {
+                name.set("MIT license")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             }
-
-
-
-
-
-
+        }
+        developers {
+            developer {
+                id.set("OpenAttribution")
+                name.set("Open Attribution")
+                url.set("https://github.com/OpenAttribution/")
+            }
+        }
+        scm {
+            url.set("https://github.com/OpenAttribution/open-attribution/")
+            connection.set("scm:git:git://github.com/OpenAttribtuion/open-attribution.git")
+            developerConnection.set("scm:git:ssh://git@github.com/OpenAttribution/open-attribution.git")
         }
     }
-}generatePomFileForPubNamePublication
+}
