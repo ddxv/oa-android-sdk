@@ -144,4 +144,4 @@ publishing {
 
         }
     }
-}
+}generatePomFileForPubNamePublication
