@@ -1,18 +1,50 @@
 # OpenAttribution Android SDK
 
-Under construction. If you'd like to help feel free to send a PR or join the Dicsord. More info on [OpenAttribution.dev](https://openattribution.dev).
+🏗️Under construction.🏗️ If you'd like to help feel free to send a PR or join the Dicsord. More info on [OpenAttribution.dev](https://openattribution.dev).
 
 
 ## MVP Goal
 
 To have a fully functional SDK which can be used to track and attribute installs, events and revenue for iOS back to an OpenAttribution server.
 
-## MVP features
+## MVP feature roadmap
 
 - Library installable via Cocoapods (? is this the right approach?) or other dependency manager for mac/ios
 - user input server endpoint ie `https://demo.openattribution.dev`
 - event tracking with params
 - documentation for how to use and next steps
+
+## Usage
+`build.gradle.kts`
+```kotlin 
+dependencies {
+    implementation("dev.openattribution:open-attribution-sdk:0.0.7")
+    // rest of your dependencies
+}
+```
+
+`MyApplication.kts`
+```kotlin
+
+import android.app.Application
+
+import dev.openattribution.sdk.OpenAttribution
+
+class MyApplication : Application() {
+
+    private lateinit var openAttribution: OpenAttribution
+
+    override fun onCreate() {
+        super.onCreate()
+        // Initialize the OpenAttribution SDK, replace with your domain
+        openAttribution = OpenAttribution.initialize(this, "https://demo.openattribution.dev")
+
+    }
+
+}
+
+```
+
 
 ### Event tracking and params details
 Events:

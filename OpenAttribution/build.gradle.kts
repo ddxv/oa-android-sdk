@@ -69,8 +69,8 @@ mavenPublishing {
         licenses {
             license {
                 name.set("MIT license")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                url.set("https://raw.githubusercontent.com/OpenAttribution/oa-android-sdk/refs/heads/main/LICENSE")
+                distribution.set("https://raw.githubusercontent.com/OpenAttribution/oa-android-sdk/refs/heads/main/LICENSE")
             }
         }
         developers {
