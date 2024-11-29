@@ -58,7 +58,7 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates("dev.openattribution", "open-attribution-sdk", "0.0.1")
+    coordinates("dev.openattribution", "open-attribution-sdk", "0.0.2")
 
     pom {
         name.set("Open Attribution Android SDK")
