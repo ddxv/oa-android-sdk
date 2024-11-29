@@ -20,5 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Open Attribution SDK"
-include(":app")
+//include(":app")
 include(":OpenAttribution")
+project(":OpenAttribution").name = "OpenAttribution"
