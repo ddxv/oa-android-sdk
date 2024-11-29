@@ -24,11 +24,12 @@ jobs:
         run: |
             version=$(awk -F' = ' '/^oaReleaseVersion/{print $2}' gradle/libs.versions.toml | tr -d '"')
             echo "VERSION=$version" >> $GITHUB_ENV
-
+          
       - name: Create Git Tag
         run: |
             git config user.name "GitHub Actions"
             git config user.email "actions@github.com"
+            git config --global url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
             git tag -a ${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
             git push origin ${{ env.VERSION }}
 
