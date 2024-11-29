@@ -1,3 +1,5 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.kotlin.android)
     id("com.android.library")
@@ -39,12 +41,9 @@ android {
 dependencies {
 
     implementation(platform(libs.okhttp.bom))
-
     implementation(libs.okhttp)
 
     implementation(libs.play.services.ads.identifier)
-
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,8 +52,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
+
 mavenPublishing {
-    coordinates("dev.openattribution.sdk", "open-attribution-sdk", "0.0.1-SNAPSHOT")
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates("dev.openattribution", "open-attribution-sdk", "0.0.1")
 
     pom {
         name.set("Open Attribution Android SDK")

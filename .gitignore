@@ -1,26 +1,17 @@
-# Gradle related
-.gradle/
-build/
-local.properties
-.externalNativeBuild/
-captures/
-.cxx/
-
-# IDE specific
-.idea/
 *.iml
-
-# macOS
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml  
 .DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
 
-# Generated files
-release/
-
-# Android Studio files
-.idea/caches/
-.idea/libraries/
-.idea/modules.xml
-.idea/workspace.xml
-.idea/navEditor.xml
-.idea/assetWizardSettings.xml
-.idea/gradle.xml
+*/release/*
