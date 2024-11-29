@@ -9,4 +9,4 @@ check `git remote -v` that `OpenAttribution/oa-android-sdk` is there. If you do 
 2. Update `libs.versions.toml` to use `X.Y.Z`
 3. Create pull request from your repo to OpenAttribution
 4. Make a new tag: `git tag X.Y.Z`
-5. Push tag `git push upstream v0.0.6` (this triggers the publish to Maven Central)
+5. Push tag `git push upstream X.Y.Z` (this triggers the publish to Maven Central)
