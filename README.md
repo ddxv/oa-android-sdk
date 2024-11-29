@@ -15,6 +15,9 @@ To have a fully functional SDK which can be used to track and attribute installs
 - documentation for how to use and next steps
 
 ## Usage
+
+You can get the latest version of OpenAttribution's (Android SDK from Maven Central)[https://central.sonatype.com/artifact/dev.openattribution/open-attribution-sdk]
+
 `build.gradle.kts`
 ```kotlin 
 dependencies {
