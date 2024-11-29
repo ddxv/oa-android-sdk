@@ -2,11 +2,8 @@ name: Publish Release to Maven Central
 
 on:
   push:
-    branches:
-      - 'main'
-    paths:
-      - 'OpenAttribution/**'
-      - '.github/workflows/publish-release.yml'
+    tags:
+      - "*.*.*"
 
 jobs:
   publish:
