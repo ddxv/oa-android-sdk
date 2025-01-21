@@ -21,7 +21,7 @@ You can get the latest version of OpenAttribution's (Android SDK from Maven Cent
 `build.gradle.kts`
 ```kotlin 
 dependencies {
-    implementation("dev.openattribution:open-attribution-sdk:0.0.7")
+    implementation("dev.openattribution:open-attribution-sdk:{LATEST_VERSION}")
     // rest of your dependencies
 }
 ```

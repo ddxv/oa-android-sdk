@@ -43,6 +43,8 @@ dependencies {
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
 
+    implementation(libs.androidx.work.runtime.ktx)
+
     implementation(libs.play.services.ads.identifier)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
