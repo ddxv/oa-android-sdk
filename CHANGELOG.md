@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.0.8 *(2025-01-21)*
+
+### THIS SDK IS NOT YET STABLE
+Please feel free to try but note that this is a work in progress. Feel free to join Open Attribution for questions or contributing.
+
+### Changes
+- Switch from simple coroutine to CoroutineWorker
+
+
 ## 0.0.7 *(2024-11-29)*
 
 ### THIS SDK IS NOT YET STABLE
