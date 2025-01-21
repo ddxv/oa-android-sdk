@@ -11,7 +11,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 
 
 
@@ -87,11 +88,15 @@ class OpenAttribution private constructor(private val context: Context) {
             // Method to initialize the SDK
             fun initialize(context: Context, baseUrl: String): OpenAttribution {
 
+                Log.d("MyOA", "InitStart")
+
+
                 val instance = OpenAttribution(context)
-                instance.trackAppOpenAsync()
+                instance.scheduleTrackAppOpen()
 
                 myBaseUrl = baseUrl
-                return OpenAttribution(context)
+//                return OpenAttribution(context)
+                return instance
             }
 
             // Getter for the base URL to ensure it's set
@@ -100,98 +105,11 @@ class OpenAttribution private constructor(private val context: Context) {
             }
         }
 
-
-    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val userIdManager by lazy { UserIdManager.getInstance(context) }
-
-
-    private fun trackAppOpenAsync() {
-        appScope.launch {
-            try {
-                trackAppOpen()
-            } catch (e: Exception) {
-                Log.e("OpenAttribution", "Error in trackAppOpen: ${e.message}")
-            }
-        }
+    private fun scheduleTrackAppOpen() {
+        val workRequest = OneTimeWorkRequestBuilder<TrackAppOpenWorker>()
+            .build()
+        WorkManager.getInstance(context).enqueue(workRequest)
     }
 
-
-     suspend fun trackAppOpen() {
-         val baseUrl = getBaseUrl() // Ensure the URL is retrieved dynamically
-        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val myTimestamp = System.currentTimeMillis()
-        val eventId = "app_open"
-        val myUid = UUID.randomUUID().toString()
-        val myOaUid = userIdManager.getUserId()
-
-        val basePackageName = context.packageName
-        val appendedPackageName = if (EmulatorDetector.isEmulator()) {
-            "${basePackageName}_test"
-        } else {
-            basePackageName
-        }
-
-
-        Log.d("OpenAttribution", "Base Package Name: $basePackageName")
-        Log.d("OpenAttribution", "Appended Package Name: $appendedPackageName")
-
-        val gaid = withContext(Dispatchers.IO) {
-            try {
-                val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-                adInfo.id
-            } catch (e: Exception) {
-                Log.e("OpenAttribution", "Error retrieving GAID: ${e.message}")
-                null
-            }
-        }
-
-        val url = constructTrackingUrl(
-            baseUrl,
-            appendedPackageName,
-            myOaUid,
-            gaid,
-            androidId ?: "unknown",
-            eventId,
-            myUid,
-            myTimestamp
-        )
-
-        try {
-            val client = OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .build()
-
-            withContext(Dispatchers.IO) {
-                client.newCall(Request.Builder().url(url).build()).execute()
-            }.use { response ->
-                if (response.isSuccessful) {
-                    Log.i("OpenAttribution", "Tracking request successful: ${response.code}")
-                } else {
-                    val responseBody = response.body?.string()
-                    Log.w("OpenAttribution", "Tracking request failed: ${response.code} $responseBody")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("OpenAttribution", "Error sending tracking request: ${e.message}")
-        }
-    }
-
-    private fun constructTrackingUrl(
-        baseUrl: String,
-        packageName: String,
-        oauid: String,
-        gaid: String?,
-        androidId: String,
-        eventId: String,
-        eventUid: String,
-        eventTime: Long
-    ): String {
-        val url= "$baseUrl/collect/events/$packageName?oa_uid=$oauid&ifa=$gaid&android_id=$androidId&event_id=$eventId&event_uid=$eventUid&event_time=$eventTime"
-
-        Log.i("OpenAttribution", "Constructing tracking URL $url")
-        return url
-    }
 
 }
