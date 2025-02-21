@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.0.9 *(2025-02-13)*
+
+### THIS SDK IS NOT YET STABLE
+Please feel free to try but note that this is a work in progress. Feel free to join Open Attribution for questions or contributing.
+
+### Changes
+- Send data vis JSON
+
 ## 0.0.8 *(2025-01-21)*
 
 ### THIS SDK IS NOT YET STABLE

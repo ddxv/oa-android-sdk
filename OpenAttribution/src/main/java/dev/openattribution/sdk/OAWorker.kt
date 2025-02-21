@@ -8,10 +8,23 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+
+
+data class TrackingEvent(
+    val oaUid: String,
+    val ifa: String?,
+    val androidId: String,
+    val eventId: String,
+    val eventUid: String,
+    val eventTime: Long,
+)
 
 class TrackAppOpenWorker(
     private val appContext: Context,
@@ -47,7 +60,7 @@ class TrackAppOpenWorker(
                 }
             }
 
-            val url = constructTrackingUrl(
+            val (url, trackingEvent) = constructTrackingRequest(
                 baseUrl,
                 appendedPackageName,
                 myOaUid,
@@ -64,8 +77,22 @@ class TrackAppOpenWorker(
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build()
 
+            val jsonBody = JSONObject().apply {
+                put("oa_uid", trackingEvent.oaUid)
+                put("ifa", trackingEvent.ifa)
+                put("android_id", trackingEvent.androidId)
+                put("event_id", trackingEvent.eventId)
+                put("event_uid", trackingEvent.eventUid)
+                put("event_time", trackingEvent.eventTime)
+            }
+
+            val request = Request.Builder()
+                .url(url)
+                .post(jsonBody.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+
             withContext(Dispatchers.IO) {
-                client.newCall(Request.Builder().url(url).build()).execute()
+                client.newCall(request).execute()
             }.use { response ->
                 return if (response.isSuccessful) {
                     Log.i("OpenAttribution", "Tracking request successful: ${response.code}")
@@ -79,11 +106,9 @@ class TrackAppOpenWorker(
             Log.e("OpenAttribution", "Error in TrackAppOpenWorker: ${e.message}")
             return Result.retry()
         }
-
-
     }
 
-    private fun constructTrackingUrl(
+    private fun constructTrackingRequest(
         baseUrl: String,
         packageName: String,
         oauid: String,
@@ -92,9 +117,19 @@ class TrackAppOpenWorker(
         eventId: String,
         eventUid: String,
         eventTime: Long
-    ): String {
-        val url = "$baseUrl/collect/events/$packageName?oa_uid=$oauid&ifa=$gaid&android_id=$androidId&event_id=$eventId&event_uid=$eventUid&event_time=$eventTime&b=A"
+    ): Pair<String, TrackingEvent> {
+        val url = "$baseUrl/collect/events/$packageName"
+
+        val trackingEvent = TrackingEvent(
+            oaUid = oauid,
+            ifa = gaid,
+            androidId = androidId,
+            eventId = eventId,
+            eventUid = eventUid,
+            eventTime = eventTime
+        )
+
         Log.i("OpenAttribution", "Constructing tracking URL $url")
-        return url
+        return Pair(url, trackingEvent)
     }
 }
