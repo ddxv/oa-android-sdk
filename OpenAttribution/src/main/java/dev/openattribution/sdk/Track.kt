@@ -106,10 +106,17 @@ class OpenAttribution private constructor(private val context: Context) {
         }
 
     private fun scheduleTrackAppOpen() {
-        val workRequest = OneTimeWorkRequestBuilder<TrackAppOpenWorker>()
-            .build()
+        val workRequest = TrackEventWorker.createWorkRequest("app_open")
+        WorkManager.getInstance(context).enqueue(workRequest)
+
+    }
+
+    fun trackEvent(eventId: String) {
+        val workRequest = TrackEventWorker.createWorkRequest(eventId)
         WorkManager.getInstance(context).enqueue(workRequest)
     }
 
 
 }
+
+
