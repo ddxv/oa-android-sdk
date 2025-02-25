@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.0.10 *(2025-02-25)*
+
+### THIS SDK IS NOT YET STABLE
+Please feel free to try but note that this is a work in progress. Feel free to join Open Attribution for questions or contributing.
+
+### Changes
+- Record events
+
+
 ## 0.0.9 *(2025-02-13)*
 
 ### THIS SDK IS NOT YET STABLE
