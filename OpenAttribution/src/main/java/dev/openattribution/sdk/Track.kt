@@ -88,7 +88,8 @@ class OpenAttribution private constructor(private val context: Context) {
             return instance!!
         }
 
-        fun trackEvent(context: Context, eventName: String) {
+
+        fun trackEvent(context: Context, eventName: String, value:Number) {
             if (instance == null) {
                 throw IllegalStateException("OpenAttribution not initialized. Call OpenAttribution.initialize() first.")
             }
@@ -97,7 +98,16 @@ class OpenAttribution private constructor(private val context: Context) {
         }
 
 
-        // Getter for the base URL to ensure it's set
+        fun trackPurchase(context: Context, revenueAmount: Double, currency: String, eventName: String="iap_purchase") {
+            if (instance == null) {
+                Log.w("OpenAttribution", "SDK not initialized. Auto-initializing with default settings.")
+                initialize(context, "https://default-endpoint.openattribution.dev")
+            }
+            val workRequest = TrackEventWorker.createRevenueWorkRequest(eventName, revenueAmount, currency)
+            WorkManager.getInstance(context).enqueue(workRequest)
+        }
+
+
         fun getBaseUrl(): String {
             return myBaseUrl ?: throw IllegalStateException("Base URL is not yet initialized. Call OpenAttribution.initialize() first.")
         }

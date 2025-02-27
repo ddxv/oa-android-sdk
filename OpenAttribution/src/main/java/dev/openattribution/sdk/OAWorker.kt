@@ -32,13 +32,21 @@ class TrackEventWorker(
         Log.d("MyOA", "doWork start")
 
         val eventId = inputData.getString(EVENT_ID_KEY) ?: return Result.failure()
-        return trackEvent(appContext, eventId)
+        val revenueAmount = if (inputData.keyValueMap.containsKey(EVENT_REVENUE_KEY)) {
+          inputData.getString(EVENT_REVENUE_KEY)
+        } else {
+            null
+        }
+        val currency = inputData.getString(EVENT_CURRENCY_KEY)
+
+        return trackEvent(appContext, eventId, revenueAmount, currency)
+
     }
 
     companion object {
         private const val EVENT_ID_KEY = "event_id"
-
-
+        private const val EVENT_REVENUE_KEY = "revenue"
+        private const val EVENT_CURRENCY_KEY = "currency"
 
         fun createWorkRequest(eventId: String): androidx.work.OneTimeWorkRequest {
             val inputData = Data.Builder()
@@ -50,7 +58,19 @@ class TrackEventWorker(
                 .build()
         }
 
-        suspend fun trackEvent(context: Context, eventId: String): Result {
+        fun createRevenueWorkRequest(eventId: String, revenueAmount: Double, currency: String): androidx.work.OneTimeWorkRequest {
+            val inputData = Data.Builder()
+                .putString(EVENT_ID_KEY, eventId)
+                .putString(EVENT_REVENUE_KEY, revenueAmount.toString())
+                .putString(EVENT_CURRENCY_KEY, currency)
+                .build()
+
+            return androidx.work.OneTimeWorkRequestBuilder<TrackEventWorker>()
+                .setInputData(inputData)
+                .build()
+        }
+
+        suspend fun trackEvent(context: Context, eventId: String, revenueAmount: String? = null, currency: String? = null): Result {
             Log.d("TrackEventWorker", "Tracking event: $eventId")
             val userIdManager = UserIdManager.getInstance(context)
             val baseUrl = OpenAttribution.getBaseUrl()
@@ -102,6 +122,15 @@ class TrackEventWorker(
                     put("event_id", trackingEvent.eventId)
                     put("event_uid", trackingEvent.eventUid)
                     put("event_time", trackingEvent.eventTime)
+
+
+                    revenueAmount?.let {
+                        put("revenue", it)
+                        put(
+                            "currency",
+                            currency ?: "USD"
+                        )
+                    }
                 }
 
                 val request = Request.Builder()
