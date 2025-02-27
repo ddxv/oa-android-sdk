@@ -6,7 +6,7 @@
 Please feel free to try but note that this is a work in progress. Feel free to join Open Attribution for questions or contributing.
 
 ### Changes
-- Record events
+- Record events with trackEvent
 
 
 ## 0.0.9 *(2025-02-13)*

@@ -88,15 +88,10 @@ class OpenAttribution private constructor(private val context: Context) {
             return instance!!
         }
 
-        // Static method to log events (similar to AppsFlyer)
         fun trackEvent(context: Context, eventName: String) {
             if (instance == null) {
-                // Auto-initialize with default URL if not initialized
-                // Or throw an error requiring initialization first
                 throw IllegalStateException("OpenAttribution not initialized. Call OpenAttribution.initialize() first.")
             }
-
-            // Track the event with optional parameters
             val workRequest = TrackEventWorker.createWorkRequest(eventName)
             WorkManager.getInstance(context).enqueue(workRequest)
         }
