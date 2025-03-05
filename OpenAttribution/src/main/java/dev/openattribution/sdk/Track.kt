@@ -88,8 +88,7 @@ class OpenAttribution private constructor(private val context: Context) {
             return instance!!
         }
 
-
-        fun trackEvent(context: Context, eventName: String, value:Number) {
+        fun trackEvent(context: Context, eventName: String) {
             if (instance == null) {
                 throw IllegalStateException("OpenAttribution not initialized. Call OpenAttribution.initialize() first.")
             }
@@ -97,11 +96,9 @@ class OpenAttribution private constructor(private val context: Context) {
             WorkManager.getInstance(context).enqueue(workRequest)
         }
 
-
         fun trackPurchase(context: Context, revenueAmount: Double, currency: String, eventName: String="iap_purchase") {
             if (instance == null) {
                 Log.w("OpenAttribution", "SDK not initialized. Auto-initializing with default settings.")
-                initialize(context, "https://default-endpoint.openattribution.dev")
             }
             val workRequest = TrackEventWorker.createRevenueWorkRequest(eventName, revenueAmount, currency)
             WorkManager.getInstance(context).enqueue(workRequest)
