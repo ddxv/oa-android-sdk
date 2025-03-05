@@ -17,10 +17,10 @@ To have a fully functional SDK which can be used to track and attribute installs
 
 - [x] Library installable via Maven
 - [x] user input server endpoint ie `https://demo.openattribution.dev`
-- [ ] Events:
+- [x] Events:
 	- [x] app_open tracking and attributing
-	- [ ] Basic event tracking
-	- [ ] Basic revenue tracking
+	- [x] Basic event tracking
+	- [x] Basic revenue tracking
 - [ ] Documentation for how to use and next steps
 
 ## Install
@@ -52,14 +52,48 @@ class MyApplication : Application() {
         super.onCreate()
         // Initialize the OpenAttribution SDK, replace with your domain
         openAttribution = OpenAttribution.initialize(this, "https://demo.openattribution.dev")
-
     }
-
 }
 
 ```
 
+## Tracking Events
 
+Use `trackEvent` to log custom events in your app.
+
+| Parameter   | Type      | Description                                               |
+| ----------- | --------- | --------------------------------------------------------- |
+| `context`   | `Context` | Android context (e.g., Activity or Application).          |
+| `eventName` | `String`  | Name of the custom event to track (e.g., "button_click"). |
+
+
+Example use:
+```kotlin
+    import dev.openattribution.sdk.OpenAttribution
+
+    ...
+	
+    OpenAttribution.trackEvent(context, "my_event_name")
+
+```
+
+
+
+## Track Purchases
+
+Use `trackPurchase` to track revenue for In App Purchases in your app.
+
+| Parameter       | Type     | Description                                      | Default          |
+|-----------------|----------|--------------------------------------------------|------------------|
+| `context`       | `Context`| Android context (e.g., Activity or Application). | -                |
+| `revenueAmount` | `Double` | Purchase amount (e.g., 12.34).                  | -                |
+| `currency`      | `String` | ISO 4217 currency code (e.g., "USD").           | -                |
+| `eventName`     | `String` | Event name for tracking.                        | `"iap_purchase"` |
+
+
+```kotlin
+    OpenAttribution.trackPurchase(context, 12.34, "USD")
+```
 
 
 ## Local Development:

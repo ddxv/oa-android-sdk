@@ -3,15 +3,8 @@ package dev.openattribution.sdk
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.util.UUID
-import java.util.concurrent.TimeUnit
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 
 
@@ -82,34 +75,45 @@ object EmulatorDetector {
 
 class OpenAttribution private constructor(private val context: Context) {
 
-        companion object {
-            private var myBaseUrl: String? = null
+    companion object {
+        private var myBaseUrl: String? = null
+        private var instance: OpenAttribution? = null
 
-            // Method to initialize the SDK
-            fun initialize(context: Context, baseUrl: String): OpenAttribution {
-
-                Log.d("MyOA", "InitStart")
-
-
-                val instance = OpenAttribution(context)
-                instance.scheduleTrackAppOpen()
-
-                myBaseUrl = baseUrl
-//                return OpenAttribution(context)
-                return instance
-            }
-
-            // Getter for the base URL to ensure it's set
-            fun getBaseUrl(): String {
-                return myBaseUrl ?: throw IllegalStateException("Base URL is not yet initialized. Call OpenAttribution.initialize() first.")
-            }
+        // Method to initialize the SDK
+        fun initialize(context: Context, baseUrl: String): OpenAttribution {
+            Log.d("MyOA", "InitStart")
+            myBaseUrl = baseUrl
+            instance = OpenAttribution(context.applicationContext)
+            instance?.scheduleTrackAppOpen()
+            return instance!!
         }
 
+        fun trackEvent(context: Context, eventName: String) {
+            if (instance == null) {
+                throw IllegalStateException("OpenAttribution not initialized. Call OpenAttribution.initialize() first.")
+            }
+            val workRequest = TrackEventWorker.createWorkRequest(eventName)
+            WorkManager.getInstance(context).enqueue(workRequest)
+        }
+
+        fun trackPurchase(context: Context, revenueAmount: Double, currency: String, eventName: String="iap_purchase") {
+            if (instance == null) {
+                Log.w("OpenAttribution", "SDK not initialized. Auto-initializing with default settings.")
+            }
+            val workRequest = TrackEventWorker.createRevenueWorkRequest(eventName, revenueAmount, currency)
+            WorkManager.getInstance(context).enqueue(workRequest)
+        }
+
+
+        fun getBaseUrl(): String {
+            return myBaseUrl ?: throw IllegalStateException("Base URL is not yet initialized. Call OpenAttribution.initialize() first.")
+        }
+    }
+
     private fun scheduleTrackAppOpen() {
-        val workRequest = OneTimeWorkRequestBuilder<TrackAppOpenWorker>()
-            .build()
+        val workRequest = TrackEventWorker.createWorkRequest("app_open")
         WorkManager.getInstance(context).enqueue(workRequest)
     }
 
-
 }
+
